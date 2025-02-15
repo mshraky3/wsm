@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Dashboard</title>
+</head>
+<body>
+    <a href="/add-content/<%=writer_id%>">Create New Content</a>
+    <h1>Writer Dashboard</h1>
+
+    <% if (contents.length > 0) { %>
+        <ul>
+            <% contents.forEach(content => { %>
+                <li>
+                    <a href="\content_det/<%= content.content_id %>">
+                        <strong>Date:</strong> <%= content.content_date %><br>
+                        <strong>Description:</strong> <%= content.description || 'No description' %><br>
+                        <strong>App Name:</strong> <%= content.app_name %><br>
+                        <strong>Approved:</strong> <%= content.approved ? 'Yes' : 'No' %><br>
+                        
+                        <!-- Display Images -->
+                        <strong>Images:</strong>
+                        <% if (content.images && content.images.length > 0) { %>
+                            <ul>
+                                <% content.images.forEach(image => { %>
+                                    <li>
+                                        <img src="<%= image.image_url %>" alt="Content Image" width="100">
+                                    </li>
+                                <% }) %>
+                            </ul>
+                        <% } else { %>
+                            <p>No images available for this content.</p>
+                        <% } %>     
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No content available for this writer.</p>
+    <% } %>
+</body>
+</html>

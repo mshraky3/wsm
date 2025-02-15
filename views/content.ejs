@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Details</title>
+    <link rel="stylesheet" href="/writer.css"> <!-- Link to the CSS file -->
+</head>
+<body>
+    <div class="instagram-container">
+        <!-- Post Header -->
+        <div class="post-header">
+            <div class="user-info">
+                <span class="username">@writer<%= content.writer_id %></span>
+                <span class="app-name"><%= content.app_name %></span>
+            </div>
+        </div>
+
+        <!-- Image Slider -->
+        <div class="image-slider">
+            <% if (images && images.length > 0) { %>
+                <div class="slider-container">
+                    <!-- Radio Buttons for Navigation -->
+                    <% images.forEach((image, index) => { %>
+                        <input type="radio" name="slider" id="slide<%= index + 1 %>" class="slider-radio" <%= index === 0 ? 'checked' : '' %>>
+                    <% }) %>
+
+                    <!-- Images -->
+                    <div class="slider-images">
+                        <% images.forEach((image, index) => { %>
+                            <img src="<%= image.image_url %>" alt="Content Image" class="slider-image">
+                        <% }) %>
+                    </div>
+
+                    <!-- Navigation Dots -->
+                    <div class="slider-dots">
+                        <% images.forEach((image, index) => { %>
+                            <label for="slide<%= index + 1 %>" class="dot"></label>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } else { %>
+                <p class="no-images">No images available for this post.</p>
+            <% } %>
+        </div>
+
+        <!-- Post Details -->
+        <div class="post-details">
+            <p class="description"><%= content.description || 'No description' %></p>
+            <p class="date"><%= content.content_date %></p>
+        </div>
+
+        <!-- Comments -->
+        <div class="comments-section">
+            <h3>Comments</h3>
+            <% if (comments && comments.length > 0) { %>
+                <ul class="comment-list">
+                    <% comments.forEach(comment => { %>
+                        <li class="comment-item">
+                            <div class="comment-header">
+                                <span class="username">@writer<%= comment.comment_writer_id %></span>
+                                <span class="comment-text"><%= comment.comment_text %></span>
+                            </div>
+                            <!-- Replies -->
+                            <div class="replies">
+                                <% if (comment.replies && comment.replies.length > 0) { %>
+                                    <ul class="reply-list">
+                                        <% comment.replies.forEach(reply => { %>
+                                            <li class="reply-item">
+                                                <span class="username">@writer<%= reply.reply_writer_id %></span>
+                                                <span class="reply-text"><%= reply.reply_text %></span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+                                <% } %>
+                            </div>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p class="no-comments">No comments available for this post.</p>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

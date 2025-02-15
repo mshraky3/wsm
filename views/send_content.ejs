@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Content</title>
+</head>
+<body>
+    <h1>Add New Content</h1>
+    <form action="/new_content" method="POST" enctype="multipart/form-data">
+        <!-- Hidden Input for Writer ID -->
+        <input type="hidden" name="writer_id" value="<%= writer_id %>">
+
+        <!-- User Selection Dropdown -->
+        <label for="user_id">Select User:</label>
+        <select id="user_id" name="user_id" required>
+            <% users.forEach(user => { %>
+                <option value="<%= user.id %>"><%= user.username %></option>
+            <% }) %>
+        </select><br><br>
+
+        <!-- Description -->
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+
+        <!-- App Name Dropdown -->
+        <label for="app_name">Select App Name:</label>
+        <select id="app_name" name="app_name" required>
+            <option value="instagram_account">Instagram Account</option>
+            <option value="tiktok_account">TikTok Account</option>
+            <option value="x_account">X (formerly Twitter) Account</option>
+        </select><br><br>
+
+        <!-- Images -->
+        <label for="images">Upload Images (up to 10):</label>
+        <input type="file" id="images" name="images" multiple accept="image/*"><br><br>
+
+        <!-- Submit Button -->
+        <button type="submit">Create Content</button>
+    </form>
+</body>
+</html>

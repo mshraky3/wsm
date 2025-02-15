@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/login.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Sign Up</h2>
+        <form action="/signup" method="POST" enctype="multipart/form-data">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="company_Type">Company Type:</label>
+            <input type="text" id="company_Type" name="company_Type">
+
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number">
+
+            <label for="user_photo">Profile Photo:</label>
+            <input type="file" id="user_photo" name="user_photo">
+
+            <button type="submit">Sign Up</button>
+        </form>
+        <a href="/login">Already have an account? Login</a>
+    </div>
+</body>
+</html>
