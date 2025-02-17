@@ -1,121 +1,130 @@
-/* General Styles */
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+
+/* General Reset */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    margin: 0;
-    color: #444;
-}
-
-header p {
-    font-size: 1.2rem;
-    color: #666;
-}
-
-/* Metrics Section */
-.metrics {
+body {
+    font-family: 'Poppins', sans-serif; /* Use a modern font */
+    background-color: #f9fafb; /* Light gray background */
+    color: #0f8382; /* Dark gray text */
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 40px;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
-
-.card {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
+a{
+    text-decoration: none;
+}
+h1 {
+    font-size: 2rem;
+    margin: 20px 0;
+    color: #0f8382; /* Darker header text */
     text-align: center;
-    flex: 1 1 calc(33.333% - 40px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.card i {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.card h2 {
-    font-size: 2rem;
-    margin: 10px 0;
-}
-
-.card p {
-    font-size: 1rem;
-    margin: 0;
-}
-
-/* Note/Comment Section */
-.note-section {
-    background-color: white;
+.calendar-container {
+    width: 98%; /* Take 98% of the screen width */
+    max-width: none; /* Remove any maximum width limit */
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.note-section h3 {
-    font-size: 1.2rem;
-    color: #444;
-    margin-bottom: 10px;
-}
-
-.note-section textarea {
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 1rem;
     margin-bottom: 10px;
-    resize: vertical;
 }
 
-.note-section button {
-    background-color: #2575fc;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+.day-name-header {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0f8382; /* Primary blue */
+    padding: 10px;
+    background: #f3f4f6; /* Light gray background */
+    border-radius: 8px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for days */
+    gap: 10px;
+    width: 100%;
+}
+
+.day {
+    height: 80vh; /* Each day takes 80% of the viewport height */
+    background: #ffffff; /* White background */
+    border-radius: 16px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+.day:hover {
+    transform: translateY(-10px); /* Lift on hover */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+}
+
+.day-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.day-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0f8382; /* Primary blue */
+}
+
+.day-date {
     font-size: 1rem;
+    color: #6b7280; /* Gray text */
 }
 
-.note-section button:hover {
-    background-color: #1b5fd6;
+.content-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Footer Section */
-footer {
-    text-align: right;
+.content-item {
+    background: #f3f4f6; /* Light gray background */
+    border-radius: 12px; /* Rounded corners */
+    padding: 15px;
+    transition: transform 0.3s ease, background 0.3s ease; /* Smooth hover effect */
+}
+
+.content-item:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    background: #e5e7eb; /* Slightly darker background on hover */
+}
+
+.content-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* Rounded image corners */
+    object-fit: cover; /* Ensure images don't distort */
+}
+
+.content-caption {
+    margin-top: 10px;
     font-size: 0.9rem;
-    color: #666;
+    color: #4b5563; /* Gray caption text */
+    text-align: center;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .metrics {
-        flex-direction: column;
-    }
-
-    .card {
-        flex: 1 1 100%;
-    }
+.no-content {
+    font-size: 1rem;
+    color: #a1a1aa; /* Light gray text */
+    text-align: center;
+    margin-top: 20px;
 }

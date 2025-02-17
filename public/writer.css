@@ -13,7 +13,7 @@ body {
 }
 
 .instagram-container {
-  max-width: 600px;
+  max-width: 30%;
   margin: 0 auto;
   background: #fff;
   border: 1px solid #dbdbdb;
@@ -71,7 +71,8 @@ body {
 .slider-image {
   min-width: 100%; /* Each image takes up the full width of the container */
   height: auto;
-  object-fit: cover;
+  object-fit: contain; /* Ensure images fit fully inside the container */
+  display: block;
 }
 
 /* Show the selected image */
@@ -114,6 +115,32 @@ body {
 
 .slider-radio:checked + .dot {
   background: #3897f0; /* Highlight the active dot */
+}
+
+/* Navigation Arrows */
+.prev-btn, .next-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 10;
+}
+
+.prev-btn {
+  left: 10px;
+}
+
+.next-btn {
+  right: 10px;
+}
+
+.prev-btn:hover, .next-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .no-images {
