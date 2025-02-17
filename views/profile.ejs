@@ -4,142 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= user.username %>'s Profile</title>
-    <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif; /* Use a modern font */
-            background-color: #f9fafb; /* Light gray background */
-            color: #0f8382; /* Dark gray text */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin: 20px 0;
-            color: #0f8382; /* Darker header text */
-            text-align: center;
-        }
-
-        .calendar-container {
-            width: 98%; /* Take 98% of the screen width */
-            max-width: none; /* Remove any maximum width limit */
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .calendar-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .day-name-header {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #0f8382; /* Primary blue */
-            padding: 10px;
-            background: #f3f4f6; /* Light gray background */
-            border-radius: 8px;
-        }
-
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr); /* 7 columns for days */
-            gap: 10px;
-            width: 100%;
-        }
-
-        .day {
-            height: 80vh; /* Each day takes 80% of the viewport height */
-            background: #ffffff; /* White background */
-            border-radius: 16px; /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            overflow-y: auto; /* Allow scrolling if content overflows */
-            padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
-        }
-
-        .day:hover {
-            transform: translateY(-10px); /* Lift on hover */
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
-        }
-
-        .day-header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .day-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #0f8382; /* Primary blue */
-        }
-
-        .day-date {
-            font-size: 1rem;
-            color: #6b7280; /* Gray text */
-        }
-
-        .content-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .content-item {
-            background: #f3f4f6; /* Light gray background */
-            border-radius: 12px; /* Rounded corners */
-            padding: 15px;
-            transition: transform 0.3s ease, background 0.3s ease; /* Smooth hover effect */
-        }
-
-        .content-item:hover {
-            transform: scale(1.05); /* Slightly enlarge on hover */
-            background: #e5e7eb; /* Slightly darker background on hover */
-        }
-
-        .content-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px; /* Rounded image corners */
-            object-fit: cover; /* Ensure images don't distort */
-        }
-
-        .content-caption {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #4b5563; /* Gray caption text */
-            text-align: center;
-        }
-
-        .no-content {
-            font-size: 1rem;
-            color: #a1a1aa; /* Light gray text */
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="/profile.css">
     <!-- Include Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1><%= user.username %>'s Profile</h1>
-
-    <!-- Calendar Section -->
+    
     <div class="calendar-container">
         <!-- Day Names Header -->
         <div class="calendar-header">
@@ -149,11 +20,9 @@
                 <div class="day-name-header"><%= day %></div>
             <% }); %>
         </div>
-
         <!-- Days Grid -->
         <div class="calendar">
             <% 
-            // Generate a 1-week calendar starting from today
             const today = new Date();
             const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Start of the week (Sunday)
             const days = [];
@@ -186,6 +55,7 @@
                                 // Get the first image from the images array
                                 const firstImage = content.images && content.images.length > 0 ? content.images[0].image_url : null;
                             %>
+                            <a href='\content_det/<%=content.id%>'>
                                 <div class="content-item">
                                     <% if (firstImage) { %>
                                         <img src="<%= firstImage %>" alt="Content Image">
@@ -195,6 +65,7 @@
                                     <div class="content-caption"><%= content.caption || 'No caption' %></div>
                                     <div class="app-name">Posted on: <%= content.app_name %></div>
                                 </div>
+                            </a>
                             <% });
                         } else { %>
                             <div class="no-content">No content for this day</div>
