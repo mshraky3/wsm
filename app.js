@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
     res.render('index.ejs');
 });
 
-// Signup route
+
 app.get('/signup', (req, res) => {
     res.render('signup.ejs');
 });
@@ -173,15 +173,14 @@ app.get("/profile/:id", async (req, res) => {
 app.get("/writer/:id", async (req, res) => {
     try {
         const writer_id = req.params.id;
+        const userid = (await (db.query('select  user_id from content where writer_id = $1' , [writer_id] ))).rows[0].user_id;
+        const users = (await db.query("select * from users where id = $1" , [userid] )).rows[0];
 
         // Step 1: Check if the writer exists
         const check_writer = await db.query("SELECT id FROM writers WHERE id = $1", [writer_id]);
         if (check_writer.rows.length < 1) {
             return res.redirect("/login"); 
         }
-
-        
-        const users = await db.query("SELECT * FROM users");
 
         
         const contentQuery = `
@@ -282,11 +281,11 @@ app.post("/new_content", upload.array('images', 10), async (req, res) => {
     }
 });
 
-app.get("/content_det/:id", async (req, res) => {
+app.get("/content_det/:id/", async (req, res) => {
     try {
         const contentId = req.params.id;
-
-        // Step 1: Fetch content details
+        const userid = (await (db.query('select  user_id from content where id = $1' , [contentId] ))).rows[0].user_id
+        const user = (await db.query("select * from users where id = $1" , [userid] )).rows[0]
         const contentQuery = "SELECT * FROM content WHERE id = $1";
         const contentResult = await db.query(contentQuery, [contentId]);
         const content = contentResult.rows[0];
@@ -355,12 +354,21 @@ app.get("/content_det/:id", async (req, res) => {
         });
 
         // Render the EJS template with all data
-        res.render("content.ejs", { content, images, comments });
+        res.render("content.ejs", { content, images, comments  , user});
     } catch (error) {
         console.error(error);
         res.status(500).send("Server error");
     }
 });
+
+
+app.post("comments" , async (req, res)=>{
+
+});
+
+
+
+
 
 
 app.listen(PORT, () => {
