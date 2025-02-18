@@ -62,10 +62,10 @@
                     <% comments.forEach(comment => { %>
                         <li class="comment-item">
                             <div class="comment-header">
-                                <span class="username">@writer<%= comment.comment_writer_id %></span>
+                                <span class="username"><%= comment.comment_writer_id %></span>
                                 <span class="comment-text"><%= comment.comment_text %></span>
                             </div>
-                            <!-- Replies -->
+                            
                             <div class="replies">
                                 <% if (comment.replies && comment.replies.length > 0) { %>
                                     <ul class="reply-list">
@@ -87,6 +87,8 @@
         </div>
         
     </div>
+
+    <!-- Hidden Input for Images -->
     <input type="hidden" id="imageUrls" value="<%= images.map(img => img.image_url).join(',') %>">
     <script src="/slider.js"></script> <!-- Link to the JavaScript file -->
 </body>

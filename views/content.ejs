@@ -54,37 +54,58 @@
             <p class="date"><%= content.content_date %></p>
         </div>
 
-        <!-- Comments -->
-        <div class="comments-section">
-            <h3>Comments</h3>
-            <% if (comments && comments.length > 0) { %>
-                <ul class="comment-list">
-                    <% comments.forEach(comment => { %>
-                        <li class="comment-item">
-                            <div class="comment-header">
-                                <span class="username">@writer<%= comment.comment_writer_id %></span>
-                                <span class="comment-text"><%= comment.comment_text %></span>
-                            </div>
-                            <!-- Replies -->
-                            <div class="replies">
-                                <% if (comment.replies && comment.replies.length > 0) { %>
-                                    <ul class="reply-list">
-                                        <% comment.replies.forEach(reply => { %>
-                                            <li class="reply-item">
-                                                <span class="username">@writer<%= reply.reply_writer_id %></span>
-                                                <span class="reply-text"><%= reply.reply_text %></span>
-                                            </li>
-                                        <% }) %>
-                                    </ul>
-                                <% } %>
-                            </div>
-                        </li>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <p class="no-comments">No comments available for this post.</p>
-            <% } %>
-        </div>
+
+    <div class="comments-section">
+    <h3>Comments</h3>
+    <% if (comments && comments.length > 0) { %>
+        <ul class="comment-list">
+            <% comments.forEach(comment => { %>
+                <li class="comment-item">
+                    <div class="comment-header">
+                        
+                        <%if(comment.comment_writer_id){  %>
+                            
+                        <span class="username">writer</span>
+                        <span class="comment-text"><%= comment.comment_text %></span>
+                        <% }else{ %>
+                            <span class="username">user</span>
+                            <span class="comment-text"><%= comment.comment_text %></span>
+                            <% } %>    
+                    </div>
+                    <!-- Replies -->
+                    <div class="replies">
+                        <% if (comment.replies && comment.replies.length > 0) { %>
+                            <ul class="reply-list">
+                                <% comment.replies.forEach(reply => { %>
+                                    <li class="reply-item">
+                                        <span class="username">@writer<%= reply.reply_writer_id %></span>
+                                        <span class="reply-text"><%= reply.reply_text %></span>
+                                    </li>
+                                <% }) %>
+                            </ul>
+                        <% } %>
+                        <!-- Reply Form -->
+                        <form action="/comments/reply/<%= comment._id %>" method="POST" class="reply-form">
+                            <input type="hidden" name="parentId" value="<%= comment._id %>">
+                            <textarea name="replyText" placeholder="Write a reply..." required></textarea>
+                            <button type="submit">Reply</button>
+                        </form>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p class="no-comments">No comments available for this post.</p>
+    <% } %>
+
+    <!-- Comment Form -->
+    <form action="/comments" method="POST" class="comment-form">
+        <textarea name="commentText" placeholder="Write a comment..." required></textarea>
+        <input type="hidden" value="<%=user.id%>" name="user_id">
+        <input type="hidden" value="<%=content.id%>" name="postId">
+        <button type="submit">Comment</button>
+    </form>
+    </div>
         
     </div>
 
