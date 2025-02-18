@@ -8,6 +8,10 @@ import busboy from 'busboy'; // Use busboy to handle multipart/form-data
 import { dirname, join } from 'path';
 import fileUpload from "express-fileupload";
 import multer from 'multer';
+import session from 'express-session'
+
+
+
 
 // Extract Pool from the pg module
 const { Pool } = pg;
@@ -17,6 +21,12 @@ const upload = multer({ storage });
 const app = express();
 const PORT = 3000;
 
+app.use(session({
+    secret: 'Ejc9c123',
+    resave: false,
+    saveUninitialized: false,
+    isWriter:0
+  }));
 // Get the directory name of the current file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -175,14 +185,15 @@ app.get("/writer/:id", async (req, res) => {
         const writer_id = req.params.id;
         const userid = (await (db.query('select  user_id from content where writer_id = $1' , [writer_id] ))).rows[0].user_id;
         const users = (await db.query("select * from users where id = $1" , [userid] )).rows[0];
-
+        
         // Step 1: Check if the writer exists
         const check_writer = await db.query("SELECT id FROM writers WHERE id = $1", [writer_id]);
         if (check_writer.rows.length < 1) {
             return res.redirect("/login"); 
         }
 
-        
+         req.session.isWriter = writer_id ;
+         
         const contentQuery = `
             SELECT 
                 c.id AS content_id,
@@ -218,7 +229,7 @@ app.get("/writer/:id", async (req, res) => {
         }));
 
         
-        res.render("writer.ejs", { writer_id, users, contents });
+        res.render("writer.ejs", { writer_id, users, contents  , isWriter:req.session.isWriter});
     } catch (error) {
         console.error(error);
         res.status(500).send("Server error");
@@ -339,7 +350,7 @@ app.get("/content_det/:id/", async (req, res) => {
         const repliesResult = await db.query(repliesQuery, [commentIds]);
         const replies = repliesResult.rows;
 
-        // Organize replies by comment_id
+        
         const repliesByCommentId = {};
         replies.forEach(reply => {
             if (!repliesByCommentId[reply.comment_id]) {
@@ -352,9 +363,8 @@ app.get("/content_det/:id/", async (req, res) => {
         comments.forEach(comment => {
             comment.replies = repliesByCommentId[comment.comment_id] || [];
         });
-
         // Render the EJS template with all data
-        res.render("content.ejs", { content, images, comments  , user});
+        res.render("content.ejs", { content, images, comments  , user , isWriter:req.session.isWriter});
     } catch (error) {
         console.error(error);
         res.status(500).send("Server error");
@@ -362,10 +372,63 @@ app.get("/content_det/:id/", async (req, res) => {
 });
 
 
-app.post("comments" , async (req, res)=>{
+// Route for submitting a new comment
+app.post("/comments", async (req, res) => {
+    try {
+        const  commentText = req.body.commentText;
+        const user_id = req.body.user_id
+        const postId = req.body.postId 
+        
+        // Validate input
+        if (!commentText) {
+            return res.status(400).json({ error: "Comment text is required." });
+        }
+        var query;
+        if(req.session.isWriter){
+            var query=
+            `
+           INSERT INTO comments(
+            content_id,  writer_id, comment_text)
+           VALUES ($1, $2, $3);
+           ` 
+        }else {
+            var query=
+            `
+           INSERT INTO comments(
+            content_id,  user_id, comment_text)
+           VALUES ($1, $2, $3);
+           `
+        }
 
+        const newComment = await db.query(query , [postId ,user_id ,commentText ])
+        res.redirect(`/content_det/${postId}`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to add comment." });
+    }
 });
 
+// Route for submitting a reply to a comment
+app.post("/comments/reply/:parentId", async (req, res) => {
+    try {
+        const { parentId } = req.params;
+        const { replyText } = req.body;
+
+        // Validate input
+        if (!replyText) {
+            return res.status(400).json({ error: "Reply text is required." });
+        }
+
+        // Save the reply to the database
+        const newReply = await saveReply(parentId, replyText, req.user._id);
+
+        // Redirect back to the post page or send a success response
+        res.redirect(`/post/${req.postId}`); // Adjust based on your data structure
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to add reply." });
+    }
+});
 
 
 
