@@ -16,6 +16,8 @@ body {
     background-color: #0f8382;
     color: white;
     padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .navbar-container {
@@ -27,12 +29,20 @@ body {
 }
 
 .logo {
-    font-size: 24px;
+    font-size: xx-large;
+    font-weight: bold;
+    width: 60px;
     font-weight: bold;
     color: white;
     text-decoration: none;
+    border-radius: 18px;
 }
+.logo-contenrt {
 
+    display: flex;
+    justify-content: center;
+    gap: 15%;
+}
 .nav-links {
     list-style: none;
     display: flex;
@@ -40,8 +50,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: x-large;
+    font-weight: bold;
 }
 
+a{
+    text-decoration: none;
+    color: #fff;
+}
 .nav-links li a {
     color: white;
     text-decoration: none;
@@ -59,13 +75,14 @@ body {
     background-image: url('./download.webp'); /* Replace with your image URL */
     background-size: cover;
     background-position: center;
+    
     height: 600px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
     text-align: center;
-    aspect-ratio: 19/6;
+    
 }
 
 .hero::before {

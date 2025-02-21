@@ -5,16 +5,25 @@
   box-sizing: border-box;
 }
 
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fafafa;
-  color: #262626;
-  padding: 20px;
+  background-color: #0f8382;
 }
 
+
+
+.page {
+  display: flex;
+  justify-content: center;
+  gap: 10%;
+  align-items: center;
+  }
+
 .instagram-container {
+  min-width: 500px;
   max-width: 30%;
-  margin: 0 auto;
+  margin: 5% auto;
   background: #fff;
   border: 1px solid #dbdbdb;
   border-radius: 8px;
@@ -231,4 +240,260 @@ body {
   text-align: center;
   padding: 20px;
   color: #8e8e8e;
+}
+/* Comments Section */
+.comments-section {
+  padding: 20px;
+  border-top: 1px solid #dbdbdb;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.comments-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #262626;
+  font-weight: bold;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+}
+
+.comment-item {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comment-header .username {
+  font-weight: bold;
+  color: #0077ff;
+  font-size: 1rem;
+}
+
+.comment-header .comment-text {
+  font-size: 0.95rem;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.comment-header .timestamp {
+  font-size: 0.85rem;
+  color: #8e8e8e;
+  margin-left: auto;
+}
+
+.replies {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+.reply-list {
+  list-style: none;
+  padding: 0;
+}
+
+.reply-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.reply-item .username {
+  font-weight: bold;
+  color: #0077ff;
+  font-size: 0.9rem;
+}
+
+.reply-item .reply-text {
+  font-size: 0.9rem;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.reply-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.reply-form textarea {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  resize: none;
+  min-height: 50px;
+}
+
+.reply-form button {
+  padding: 10px 20px;
+  background-color: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+
+.reply-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Comment Form */
+.comment-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.comment-form textarea {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  resize: none;
+  min-height: 50px;
+}
+.comment-form .approved {
+  flex: 2;
+  background-color: #0f8382;
+}
+.comment-form button {
+  padding: 10px 20px;
+  background-color: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.comment-form button:hover {
+  background-color: #0056b3;
+}
+
+.no-comments {
+  text-align: center;
+  padding: 20px;
+  color: #8e8e8e;
+  font-size: 0.95rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f9f9f9, #eaeaea);
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Adjust width as needed */
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.stats-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stats-icon {
+  font-size: 20px;
+  color: #ff9800; /* Orange icon color */
+}
+
+.stats-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.stats-change {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.stats-change-value {
+  color: #2ecc71; /* Green for positive change */
+  font-weight: 600;
+}
+
+.stats-progress {
+  width: 100%;
+  height: 8px;
+  background-color: #ebebeb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stats-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71); /* Gradient progress bar */
+  border-radius: 4px;
 }

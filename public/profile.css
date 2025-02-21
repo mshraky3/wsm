@@ -6,6 +6,8 @@
     box-sizing: border-box;
 }
 
+
+
 body {
     font-family: 'Poppins', sans-serif; /* Use a modern font */
     background-color: #f9fafb; /* Light gray background */
@@ -128,3 +130,14 @@ h1 {
     text-align: center;
     margin-top: 20px;
 }
+
+
+
+
+.det {
+    margin-top: 10px;
+    font-size: 0.6rem;
+    color: #4b5563; /* Gray caption text */
+    text-align: center;
+    
+}   

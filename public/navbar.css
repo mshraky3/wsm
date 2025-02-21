@@ -1,0 +1,84 @@
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    font-size: xx-large;
+    top: 0;
+    border:5px #0f8382 solid;
+    border-radius: 8px;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    color: #0f8382;
+    text-decoration: none;
+}
+
+.navbar .logo img {
+    padding: 0%;
+    border-radius: 50%;
+    width: 10%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.navbar .logo span {
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+.navbar .nav-links {
+    color: #0f8382;
+    display: flex;
+    align-items: center;
+}
+
+.navbar .nav-links a {
+    color: #0f8382;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.navbar .nav-links a:hover {
+    text-decoration: underline;
+    
+}
+
+.navbar .profile-photo {
+    margin-left: 20px;
+    position: relative;
+}
+
+.navbar .profile-photo img {
+    width: 60px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.navbar .profile-photo:hover .username {
+    display: block;
+}
+
+.navbar .profile-photo .username {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0f8382;
+    color: #0f8382;
+    padding: 5px 10px;
+    border: 1px solid #0f8382;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+}
