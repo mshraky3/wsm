@@ -5,109 +5,189 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Content Details</title>
     <link rel="stylesheet" href="/writer.css"> <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="/navbar.css">
 </head>
 <body>
-    <div class="instagram-container">
-        <!-- Post Header -->
-        <div class="post-header">
-            <div class="user-info">
-                <span class="username">user name : <%= user.username%></span>
-                <span class="app-name"><%= content.app_name %></span>
+    <div class="navbar">
+        <a class="logo" href="/">
+            <img src="/logo.jpg" alt="Logo Icon"> 
+            <span>وسم</span> 
+        </a>
+        <div class="nav-links">
+            <a><%= user.username %></a>
+            <div class="profile-photo">
+                <img src="<%= `data:image/jpeg;base64,${Buffer.from(user.user_photo).toString('base64')}` %>" alt="Profile Photo">
+                <div class="username"><%= user.username %></div>
             </div>
         </div>
 
-        <!-- Image Slider -->
-        <div class="image-slider">
-            <% if (images && images.length > 0) { %>
-                <div class="slider-container">
-                    <!-- Radio Buttons for Navigation -->
-                    <% images.forEach((image, index) => { %>
-                        <input type="radio" name="slider" id="slide<%= index + 1 %>" class="slider-radio" <%= index === 0 ? 'checked' : '' %>>
-                    <% }) %>
-
-                    <!-- Images -->
-                    <div class="slider-images">
-                        <% images.forEach((image, index) => { %>
-                            <img src="<%= image.image_url %>" alt="Content Image" class="slider-image">
-                        <% }) %>
-                    </div>
-
-                    <!-- Navigation Dots -->
-                    <div class="slider-dots">
-                        <% images.forEach((image, index) => { %>
-                            <label for="slide<%= index + 1 %>" class="dot"></label>
-                        <% }) %>
-                    </div>
-
-                    <!-- Navigation Arrows -->
-                    <button class="prev-btn" onclick="changeSlide(-1)">❮</button>
-                    <button class="next-btn" onclick="changeSlide(1)">❯</button>
+    </div>
+    <div class="page">
+        <div class="instagram-container">
+            <!-- Post Header -->
+            <div class="post-header">
+                <div class="user-info">
+                    <span class="username"><%= content.app_name %></span>
                 </div>
-            <% } else { %>
-                <p class="no-images">No images available for this post.</p>
-            <% } %>
+            </div>
+            <!-- Image Slider -->
+            <div class="image-slider">
+                <% if (images && images.length > 0) { %>
+                    <div class="slider-container">
+                        <!-- Radio Buttons for Navigation -->
+                        <% images.forEach((image, index) => { %>
+                            <input type="radio" name="slider" id="slide<%= index + 1 %>" class="slider-radio" <%= index === 0 ? 'checked' : '' %>>
+                        <% }) %>
+    
+                        <!-- Images -->
+                        <div class="slider-images">
+                            <% images.forEach((image, index) => { %>
+                                <img src="<%= image.image_url %>" alt="Content Image" class="slider-image">
+                            <% }) %>
+                        </div>
+    
+                        <!-- Navigation Dots -->
+                        <div class="slider-dots">
+                            <% images.forEach((image, index) => { %>
+                                <label for="slide<%= index + 1 %>" class="dot"></label>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <p class="no-images">No images available for this post.</p>
+                <% } %>
+            </div>
+    
+            <!-- Post Details -->
+            <div class="post-details">
+                <p class="description"><%= content.description || 'No description' %></p>
+                <p class="date"><%= content.content_date %></p>
+            </div>
+    
+    
+        <div class="comments-section">
+
         </div>
-
-        <!-- Post Details -->
-        <div class="post-details">
-            <p class="description"><%= content.description || 'No description' %></p>
-            <p class="date"><%= content.content_date %></p>
+            
         </div>
-
-
-    <div class="comments-section">
-    <h3>Comments</h3>
-    <% if (comments && comments.length > 0) { %>
-        <ul class="comment-list">
-            <% comments.forEach(comment => { %>
-                <li class="comment-item">
-                    <div class="comment-header">
-                        
-                        <%if(comment.comment_writer_id){  %>
+        <div class="instagram-container">
+            <!-- Post Header -->
+            <div class="post-header">
+                <div class="user-info">
+                    <span class="username"><%= content.app_name %></span>
+                </div>
+            </div>
+    
+            
+            <div class="image-slider">
+                <div class="stats-card">
+                    <div class="stats-header">
+                      <span class="stats-title">Followers</span>
+                      <span class="stats-icon">🚀</span>
+                    </div>
+                    <div class="stats-value">12.3K</div>
+                    <div class="stats-change">
+                      <span class="stats-change-value">+500</span>
+                      <span class="stats-change-label">since last week</span>
+                    </div>
+                    <div class="stats-progress">
+                      <div class="stats-progress-bar" style="width: 75%;"></div>
+                    </div>
+                  </div>
+                  <div class="stats-card">
+                    <div class="stats-header">
+                      <span class="stats-title">Followers</span>
+                      <span class="stats-icon">🚀</span>
+                    </div>
+                    <div class="stats-value">12.3K</div>
+                    <div class="stats-change">
+                      <span class="stats-change-value">+500</span>
+                      <span class="stats-change-label">since last week</span>
+                    </div>
+                    <div class="stats-progress">
+                      <div class="stats-progress-bar" style="width: 75%;"></div>
+                    </div>
+                  </div>
+                  <div class="stats-card">
+                    <div class="stats-header">
+                      <span class="stats-title">Followers</span>
+                      <span class="stats-icon">🚀</span>
+                    </div>
+                    <div class="stats-value">12.3K</div>
+                    <div class="stats-change">
+                      <span class="stats-change-value">+500</span>
+                      <span class="stats-change-label">since last week</span>
+                    </div>
+                    <div class="stats-progress">
+                      <div class="stats-progress-bar" style="width: 75%;"></div>
+                    </div>
+                  </div>
+            </div>
+    
+        <div class="comments-section">
+        <h3>Comments</h3>
+        <% if (comments && comments.length > 0) { %>
+            <ul class="comment-list">
+                <% comments.forEach(comment => { %>
+                    <li class="comment-item">
+                        <div class="comment-header">
                             
-                        <span class="username">writer</span>
-                        <span class="comment-text"><%= comment.comment_text %></span>
-                        <% }else{ %>
-                            <span class="username">user</span>
+                            <%if(comment.comment_writer_id){  %>
+                                
+                            <span class="username">writer</span>
                             <span class="comment-text"><%= comment.comment_text %></span>
-                            <% } %>    
-                    </div>
-                    <!-- Replies -->
-                    <div class="replies">
-                        <% if (comment.replies && comment.replies.length > 0) { %>
-                            <ul class="reply-list">
-                                <% comment.replies.forEach(reply => { %>
-                                    <li class="reply-item">
-                                        <span class="username">@writer<%= reply.reply_writer_id %></span>
-                                        <span class="reply-text"><%= reply.reply_text %></span>
-                                    </li>
-                                <% }) %>
-                            </ul>
-                        <% } %>
-                        <!-- Reply Form -->
-                        <form action="/comments/reply/<%= comment._id %>" method="POST" class="reply-form">
-                            <input type="hidden" name="parentId" value="<%= comment._id %>">
-                            <textarea name="replyText" placeholder="Write a reply..." required></textarea>
-                            <button type="submit">Reply</button>
-                        </form>
-                    </div>
-                </li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p class="no-comments">No comments available for this post.</p>
-    <% } %>
-
-    <!-- Comment Form -->
-    <form action="/comments" method="POST" class="comment-form">
-        <textarea name="commentText" placeholder="Write a comment..." required></textarea>
-        <input type="hidden" value="<%=user.id%>" name="user_id">
-        <input type="hidden" value="<%=content.id%>" name="postId">
-        <button type="submit">Comment</button>
-    </form>
-    </div>
+                            <% }else{ %>
+                                <span class="username">user</span>
+                                <span class="comment-text"><%= comment.comment_text %></span>
+                                <% } %>    
+                        </div>
+                        <!-- Replies -->
+                        <div class="replies">
+                            <% if (comment.replies && comment.replies.length > 0) { %>
+                                <ul class="reply-list">
+                                    <% comment.replies.forEach(reply => { %>
+                                        <li class="reply-item">
+                                            <span class="username">@writer<%= reply.reply_writer_id %></span>
+                                            <span class="reply-text"><%= reply.reply_text %></span>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            <% } %>
+                            <!-- Reply Form -->
+                            <form action="/comments/reply/<%= comment._id %>" method="POST" class="reply-form">
+                                <input type="hidden" name="parentId" value="<%= comment._id %>">
+                                <textarea name="replyText" placeholder="Write a reply..." required></textarea>
+                                <button type="submit">Reply</button>
+                            </form>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p class="no-comments">No comments available for this post.</p>
+        <% } %>
+    
+        <!-- Comment Form -->
+        <form action="/comments" method="POST" class="comment-form" >
+            <input type="hidden" value="<%=user.id%>" name="user_id">
+            <input type="hidden" value="<%=content.id%>" name="postId">
+            <textarea name="commentText" placeholder="Write a comment..." required></textarea>
+            <button type="submit" class="submit">Comment</button>
+        </form>
+        <form action="/approved" method="post" class="comment-form">
+            <input type="hidden" value="<%=user.id%>" name="user_id">
+            <input type="hidden" value="<%=content.id%>" name="postId">
+            <button name="approved" class="approved"> approved</button>
+        </form>
         
+
+
+        
+        </div>
+            
+        </div>
     </div>
+
 
     <!-- Hidden Input for Images -->
     <input type="hidden" id="imageUrls" value="<%= images.map(img => img.image_url).join(',') %>">

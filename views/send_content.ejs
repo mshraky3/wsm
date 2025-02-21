@@ -9,7 +9,7 @@
     <h1>Add New Content</h1>
     <form action="/new_content" method="POST" enctype="multipart/form-data">
         <!-- Hidden Input for Writer ID -->
-        <input type="hidden" name="writer_id" value="<%= writer_id %>">
+        <input type="hidden" name="writer_id" value="<%= writer_id %>" required>
 
         <!-- User Selection Dropdown -->
         <label for="user_id">Select User:</label>
@@ -33,7 +33,7 @@
 
         <!-- Images -->
         <label for="images">Upload Images (up to 10):</label>
-        <input type="file" id="images" name="images" multiple accept="image/*"><br><br>
+        <input type="file" id="images" name="images" multiple accept="image/*" required><br><br>
 
         <!-- Submit Button -->
         <button type="submit">Create Content</button>

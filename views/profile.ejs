@@ -5,12 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= user.username %>'s Profile</title>
     <link rel="stylesheet" href="/profile.css">
+    <link rel="stylesheet" href="/navbar.css">
     <!-- Include Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    <h1><%= user.username %>'s Profile</h1>
+    <!-- Navbar -->
+    <div class="navbar" >
+        <a class="logo" href="/">
+            <img src="/logo.jpg" alt="Logo Icon"> 
+            <span>وسم</span> 
+        </a>
+
+        <div class="nav-links">
+            
+            <a><%= user.username %></a>
+            <div class="profile-photo">
+                <img src="<%= `data:image/jpeg;base64,${Buffer.from(user.user_photo).toString('base64')}` %>" alt="Profile Photo">
+                <div class="username"><%= user.username %></div>
+            </div>
+        </div>
+    </div>
+
     
+    <section>
+    </section>
     <div class="calendar-container">
         <!-- Day Names Header -->
         <div class="calendar-header">
@@ -63,7 +83,12 @@
                                         <div class="no-image">No image available</div>
                                     <% } %>
                                     <div class="content-caption"><%= content.caption || 'No caption' %></div>
-                                    <div class="app-name">Posted on: <%= content.app_name %></div>
+
+                                    <% if(content.approved){ %>
+                                    <div class="det" ><span style="color:rgb(15, 131, 130)">  approved </span>  </div>
+                                    <% }else { %>
+                                        <div class="det"><span style="color:rgb(214, 212, 100)"> pending </span> </div>
+                                    <% } %>
                                 </div>
                             </a>
                             <% });
