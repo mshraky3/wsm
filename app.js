@@ -13,20 +13,20 @@ import session from 'express-session'
 
 
 
+
 // Extract Pool from the pg module
 const { Pool } = pg;
 const storage = multer.memoryStorage(); // Store files in memory as buffers
 const upload = multer({ storage });
 
 const app = express();
-const PORT = 3000;
-
 app.use(session({
     secret: 'Ejc9c123',
     resave: false,
     saveUninitialized: false,
-    isWriter:0
-  }));
+    isWriter: 0,
+    User: { isUser: 0, id: null, username: null }
+}));
 // Get the directory name of the current file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -48,39 +48,55 @@ const db = new Pool({
 });
 
 
+//functions
+async function user_by_id(user_id) {
+    const data = await db.query('SELECT * FROM users WHERE id = $1', [user_id])
+    return (data.rows[0]);
+}
+
 app.get('/', (req, res) => {
+
+    req.session.isUser = false;
     res.render('index.ejs');
 });
-
 
 app.get('/signup', (req, res) => {
     res.render('signup.ejs');
 });
 
-app.post('/signup', (req, res) => {
-    parseMultipartFormData(req, async (fields, fileData) => {
-        try {
-            const { username, password, company_Type, account_type, phone_number } = fields;
+app.post('/signup', upload.single('user_photo'), async (req, res) => {
+    try {
+        // Extract form fields from req.body
+        const { username, password, company_Type, account_type, phone_number, instagram_account, x_account, linked_in_account, tiktok_account } = req.body;
 
-            if (!username || !password || !account_type) {
-                return res.status(400).send('All required fields are not provided.');
-            }
+        // Extract uploaded file data from req.file
+        const userPhoto = req.file ? req.file.buffer : null; // Use buffer if storing in DB, or filename if saving to disk
 
-            // Insert into database without hashing the password
-            const query = `
-                INSERT INTO users (username, password, company_Type, account_type, phone_number, user_photo)
-                VALUES ($1, $2, $3, $4, $5, $6)
-                RETURNING id
-            `;
-            const values = [username, password, company_Type, "user", phone_number, fileData];
-            const result = await db.query(query, values);
-            res.send('User registered successfully!');
+        const query = `
+            INSERT INTO users (username, password, company_Type, account_type, phone_number, user_photo, instagram_account, x_account, linked_in_account, tiktok_account)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING id
+        `;
+        const values = [
+            username,
+            password,
+            company_Type,
+            "user",
+            phone_number,
+            userPhoto, // File buffer or filename
+            instagram_account,
+            x_account,
+            linked_in_account,
+            tiktok_account
+        ];
 
-        } catch (error) {
-            console.error(error);
-            res.status(500).send('Error registering user.');
-        }
-    });
+        const result = await db.query(query, values);
+
+        res.redirect(`/profile/${result.rows[0].id}`);
+    } catch (error) {
+        console.error(error);
+        res.redirect("/signup");
+    }
 });
 
 // Login route
@@ -91,11 +107,6 @@ app.get('/login', (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    // Validate input
-    if (!username || !password) {
-        return res.status(400).send('Username and password are required.');
-    }
-
     try {
         // Check users table
         const userQuery = 'SELECT * FROM users WHERE username = $1 AND password = $2';
@@ -103,6 +114,7 @@ app.post('/login', async (req, res) => {
 
         if (userResult.rows.length > 0) {
             // User found in the users table
+            req.session.isUser = true;
             return res.redirect(`/profile/${userResult.rows[0].id}`);
         }
 
@@ -111,27 +123,27 @@ app.post('/login', async (req, res) => {
         const writerResult = await db.query(writerQuery, [username, password]);
 
         if (writerResult.rows.length > 0) {
-            // Writer found in the writers table
+            req.session.isWriter = true;
+
             return res.redirect(`/writer/${writerResult.rows[0].id}`);
         }
 
         // If neither table matches, return unauthorized
-        return res.status(401).send('Invalid username or password.');
+        console.log("Invalid username or password.")
+        return res.redirect('login');
 
     } catch (error) {
         console.error('Error during login:', error.message);
-        return res.status(500).send('Error logging in.');
+        return res.status(500).send('Error from the server');
     }
 });
+
+
 
 app.get("/profile/:id", async (req, res) => {
     try {
         const userId = req.params.id;
-
-        // Fetch user details
-        const userQuery = 'SELECT * FROM users WHERE id = $1';
-        const userResult = await db.query(userQuery, [userId]);
-        const user = userResult.rows[0];
+        const user = await user_by_id(userId);
         if (!user) {
             return res.status(404).send("User not found");
         }
@@ -142,7 +154,8 @@ app.get("/profile/:id", async (req, res) => {
                 c.id, 
                 c.content_date, 
                 c.description AS caption, 
-                c.app_name 
+                c.app_name ,
+                c.approved
             FROM content c
             WHERE c.user_id = $1 
             ORDER BY c.content_date DESC
@@ -171,7 +184,7 @@ app.get("/profile/:id", async (req, res) => {
             };
         }));
 
-        
+
         res.render("profile.ejs", { user, contents });
     } catch (error) {
         console.error(error);
@@ -183,53 +196,56 @@ app.get("/profile/:id", async (req, res) => {
 app.get("/writer/:id", async (req, res) => {
     try {
         const writer_id = req.params.id;
-        const userid = (await (db.query('select  user_id from content where writer_id = $1' , [writer_id] ))).rows[0].user_id;
-        const users = (await db.query("select * from users where id = $1" , [userid] )).rows[0];
-        
-        // Step 1: Check if the writer exists
-        const check_writer = await db.query("SELECT id FROM writers WHERE id = $1", [writer_id]);
-        if (check_writer.rows.length < 1) {
-            return res.redirect("/login"); 
-        }
 
-         req.session.isWriter = writer_id ;
-         
-        const contentQuery = `
-            SELECT 
-                c.id AS content_id,
-                c.user_id,
-                c.content_date,
-                c.description,
-                c.app_name,
-                c.created_at,
-                c.approved
-            FROM content c
-            WHERE c.writer_id = $1
-            ORDER BY c.content_date DESC
-        `;
-        const contentResult = await db.query(contentQuery, [writer_id]);
+        const rusaltuserid = (await (db.query('select  user_id from content where writer_id = $1', [writer_id])));
+        if (rusaltuserid.rows.length < 1) {
+            res.redirect(`add-content/${writer_id}`)
+        } else {
+            const userid = rusaltuserid.rows[0].user_id;
+            const users = await user_by_id(userid);
+            const check_writer = await db.query("SELECT id FROM writers WHERE id = $1", [writer_id]);
+            if (check_writer.rows.length < 1) {
+                return res.redirect("/login");
+            }
 
-        const contents = await Promise.all(contentResult.rows.map(async (content) => {
-            
-            const imageQuery = `
+            req.session.isWriter = writer_id;
+
+            const contentQuery = `
                 SELECT 
-                    ci.id AS image_id,
-                    encode(ci.image, 'base64') AS image_base64
-                FROM content_images ci
-                WHERE ci.content_id = $1
+                    c.id AS content_id,
+                    c.user_id,
+                    c.content_date,
+                    c.description,
+                    c.app_name,
+                    c.created_at,
+                    c.approved
+                FROM content c
+                WHERE c.writer_id = $1
+                ORDER BY c.content_date DESC
             `;
-            const imageResult = await db.query(imageQuery, [content.content_id]);
-            return {
-                ...content,
-                images: imageResult.rows.map(img => ({
-                    image_id: img.image_id,
-                    image_url: `data:image/jpeg;base64,${img.image_base64}`
-                }))
-            };
-        }));
+            const contentResult = await db.query(contentQuery, [writer_id]);
 
-        
-        res.render("writer.ejs", { writer_id, users, contents  , isWriter:req.session.isWriter});
+            const contents = await Promise.all(contentResult.rows.map(async (content) => {
+                const imageQuery = `
+                    SELECT 
+                        ci.id AS image_id,
+                        encode(ci.image, 'base64') AS image_base64
+                    FROM content_images ci
+                    WHERE ci.content_id = $1
+                `;
+                const imageResult = await db.query(imageQuery, [content.content_id]);
+                return {
+                    ...content,
+                    images: imageResult.rows.map(img => ({
+                        image_id: img.image_id,
+                        image_url: `data:image/jpeg;base64,${img.image_base64}`
+                    }))
+                };
+            }));
+
+
+            res.render("writer.ejs", { writer_id, users, contents, isWriter: req.session.isWriter });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send("Server error");
@@ -237,7 +253,7 @@ app.get("/writer/:id", async (req, res) => {
 });
 
 
-app.get("/add-content/:writer_id", async (req, res) => {
+app.get("/writer/add-content/:writer_id", async (req, res) => {
     try {
         const writer_id = req.params.writer_id;
 
@@ -246,7 +262,7 @@ app.get("/add-content/:writer_id", async (req, res) => {
         const usersResult = await db.query(usersQuery);
         const users = usersResult.rows;
 
-        // Render the add-content page with the writer_id and users
+
         res.render("send_content.ejs", { writer_id, users });
     } catch (error) {
         console.error(error);
@@ -259,11 +275,6 @@ app.post("/new_content", upload.array('images', 10), async (req, res) => {
     try {
         const { user_id, description, app_name, writer_id } = req.body;
         const images = req.files; // Array of uploaded images
-
-        // Validate required fields
-        if (!user_id || !description || !app_name || !writer_id) {
-            return res.status(400).send("Missing required fields");
-        }
 
         // Insert the new content into the `content` table
         const insertContentQuery = `
@@ -295,8 +306,8 @@ app.post("/new_content", upload.array('images', 10), async (req, res) => {
 app.get("/content_det/:id/", async (req, res) => {
     try {
         const contentId = req.params.id;
-        const userid = (await (db.query('select  user_id from content where id = $1' , [contentId] ))).rows[0].user_id
-        const user = (await db.query("select * from users where id = $1" , [userid] )).rows[0]
+        const userid = (await (db.query('select  user_id from content where id = $1', [contentId]))).rows[0].user_id
+        const user = await user_by_id(userid)
         const contentQuery = "SELECT * FROM content WHERE id = $1";
         const contentResult = await db.query(contentQuery, [contentId]);
         const content = contentResult.rows[0];
@@ -333,7 +344,6 @@ app.get("/content_det/:id/", async (req, res) => {
         const commentsResult = await db.query(commentsQuery, [contentId]);
         const comments = commentsResult.rows;
 
-        // Step 4: Fetch replies for each comment
         const repliesQuery = `
             SELECT 
                 r.id AS reply_id,
@@ -350,7 +360,7 @@ app.get("/content_det/:id/", async (req, res) => {
         const repliesResult = await db.query(repliesQuery, [commentIds]);
         const replies = repliesResult.rows;
 
-        
+
         const repliesByCommentId = {};
         replies.forEach(reply => {
             if (!repliesByCommentId[reply.comment_id]) {
@@ -359,12 +369,12 @@ app.get("/content_det/:id/", async (req, res) => {
             repliesByCommentId[reply.comment_id].push(reply);
         });
 
-        // Attach replies to their respective comments
+
         comments.forEach(comment => {
             comment.replies = repliesByCommentId[comment.comment_id] || [];
         });
         // Render the EJS template with all data
-        res.render("content.ejs", { content, images, comments  , user , isWriter:req.session.isWriter});
+        res.render("content.ejs", { content, images, comments, user, isWriter: req.session.isWriter });
     } catch (error) {
         console.error(error);
         res.status(500).send("Server error");
@@ -374,33 +384,35 @@ app.get("/content_det/:id/", async (req, res) => {
 
 // Route for submitting a new comment
 app.post("/comments", async (req, res) => {
+
+
+
     try {
-        const  commentText = req.body.commentText;
+        const commentText = req.body.commentText;
         const user_id = req.body.user_id
-        const postId = req.body.postId 
-        
+        const postId = req.body.postId
+
         // Validate input
         if (!commentText) {
             return res.status(400).json({ error: "Comment text is required." });
         }
         var query;
-        if(req.session.isWriter){
-            var query=
-            `
+        if (req.session.isWriter) {
+            var query =
+                `
            INSERT INTO comments(
             content_id,  writer_id, comment_text)
            VALUES ($1, $2, $3);
-           ` 
-        }else {
-            var query=
-            `
+           `
+        } else {
+            var query =
+                `
            INSERT INTO comments(
             content_id,  user_id, comment_text)
            VALUES ($1, $2, $3);
            `
         }
-
-        const newComment = await db.query(query , [postId ,user_id ,commentText ])
+        const newComment = await db.query(query, [postId, user_id, commentText])
         res.redirect(`/content_det/${postId}`);
     } catch (error) {
         console.error(error);
@@ -433,7 +445,19 @@ app.post("/comments/reply/:parentId", async (req, res) => {
 
 
 
-
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.post("/approved" , (req , res)=>{
+    const id = req.body.user_id;
+    const post_id = req.body.postId;
+    try {
+            const query  = `UPDATE content SET approved = true WHERE id = $1;`
+            db.query(query , [post_id]);
+            res.redirect(`/content_det/${post_id}`);
+    } catch (error) {
+        console.error(error)
+        res.redirect("/");
+    }
+    
+})
+app.listen(3000, () => {
+    console.log(`Server running on http://localhost:${3000}`);
 });
