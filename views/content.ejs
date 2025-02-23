@@ -1,7 +1,25 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport"content="width=device-width, initial-scale=1.0"><title>Content Details</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Details</title>
     <link rel="stylesheet" href="/navbar.css">
-<link rel="stylesheet"href="/writer.css"></head><style></style><body><div class="center-nav"><div class="navbar"><a class="logo" href="/"><img src="/logo.jpg"alt="Logo Icon"><span>وسم</span> 
-        </a><div class="nav-links"><a href="/profile/<%=user.id %>"><%= user.username %></a>
+    <link rel="stylesheet" href="/writer.css"> 
+    
+</head>
+<style>
+    
+</style>
+<body>
+    <div class="center-nav">
+    <div class="navbar">
+        <a class="logo" href="/">
+            <img src="/logo.jpg" alt="Logo Icon"> 
+            <span>وسم</span> 
+        </a>
+        <div class="nav-links">
+            <a href="/profile/<%=user.id %>"><%= user.username %></a>
             <div class="profile-photo">
                 <img src="<%= `data:image/jpeg;base64,${Buffer.from(user.user_photo).toString('base64')}` %>" alt="Profile Photo">
                 <div class="username"><%= user.username %></div>
@@ -200,4 +218,4 @@
         }
     </style>
 </body>
-</html> ;
+</html>

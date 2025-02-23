@@ -7,24 +7,89 @@
     <link rel="stylesheet" href="/profile.css">
     <link rel="stylesheet" href="/navbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<style>
-    @media (max-width: 768px) {
+    <style>
+        /* General Styles */
+        body {
+            display: flex;
+            flex-direction: column; /* Arrange children vertically */
+            min-height: 100vh; /* Ensure the body takes up at least the full viewport height */
+            margin: 0; /* Remove default margin */
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .content-container {
+            flex: 1; /* Allow the content container to grow and take up available space */
+            padding: 20px; /* Add some padding for better spacing */
+            
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            border: 5px #0f8382 solid;
+            border-radius: 16px;
+        }
+
         .navbar .logo img {
-            width: 50%; /* Reduce logo size for smaller screens */
+            width: 10%; /* Adjust logo size */
+            aspect-ratio: 1;
+            object-fit: cover;
         }
 
         .navbar .logo span {
-            font-size: medium; /* Reduce font size for better fit */
+            font-size: x-large;
+            font-weight: bold;
+            color: #0f8382;
         }
 
-        .navbar .nav-links a {  
-            font-size: 12px; /* Reduce font size for better fit */
-            margin: 0; /* Remove unnecessary margin */
+        .navbar .nav-links a {
+            color: #0f8382;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: large;
+            font-weight: bold;
         }
-    }
-</style>
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar .logo img {
+                width: 50%; /* Reduce logo size for smaller screens */
+            }
+            .navbar .logo span {
+                font-size: medium; /* Reduce font size for better fit */
+            }
+            .navbar .nav-links a {
+                font-size: 12px; /* Reduce font size for better fit */
+                margin: 0; /* Remove unnecessary margin */
+            }
+        }
+    </style>
+</head>
 <body>
+    <!-- Navbar Section -->
     <div class="navbar">
         <a class="logo" href="/">
             <img src="/logo.jpg" alt="Logo Icon">
@@ -39,84 +104,70 @@
         </div>
     </div>
 
-    <div class="calendar-container">
-        <div class="calendar-header">
-            <% ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => { %>
-                <div class="day-name-header"><%= day %></div>
-            <% }); %>
-        </div>
-        <div class="calendar">
-            <% 
-            const today = new Date();
-            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-            const days = Array(7).fill().map((_, i) => {
-                const date = new Date(startOfWeek);
-                date.setDate(startOfWeek.getDate() + i);
-                return date;
-            });
-
-            const contentMap = {};
-            contents.forEach(content => {
-                const contentDate = new Date(content.content_date);
-                contentDate.setDate(contentDate.getDate() + 1); // Add one day
-                const key = contentDate.toISOString().split('T')[0];
-                (contentMap[key] = contentMap[key] || []).push(content);
-            });
-
-            days.forEach(day => { %>
-                <div class="day">
-                    <div class="day-header">
-                        <div class="day-name"><%= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()] %></div>
-                        <div class="day-date"><%= day.getDate() %></div>
-                    </div>
-                    <div class="content-list">
-                        <% const dayKey = day.toISOString().split('T')[0]; %>
-                        <% if (contentMap[dayKey]) { %>
-                            <% contentMap[dayKey].forEach(content => { %>
-                                <a href="\content_det/<%= content.id %>">
-                                    <div class="content-item">
-                                        <div class="det"><span><%= content.app_name %></span></div>
-                                        <% if (content.images?.[0]?.image_url) { %>
-                                            <img src="<%= content.images[0].image_url %>" alt="Content Image">
-                                        <% } else { %>
-                                            <div class="no-image">No image available</div>
-                                        <% } %>
-                                        <div class="content-caption"><%= content.caption || 'No caption' %></div>
-                                        <div class="det">
-                                            <span style="color:<%= content.approved ? 'rgb(15, 131, 130)' : 'rgb(214, 212, 100)' %>">
-                                                <%= content.approved ? 'approved' : 'pending' %>
-                                            </span>
+    <!-- Main Content Container -->
+    <div class="content-container">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <% ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => { %>
+                    <div class="day-name-header"><%= day %></div>
+                <% }); %>
+            </div>
+            <div class="calendar">
+                <% 
+                const today = new Date();
+                const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                const days = Array(7).fill().map((_, i) => {
+                    const date = new Date(startOfWeek);
+                    date.setDate(startOfWeek.getDate() + i);
+                    return date;
+                });
+                const contentMap = {};
+                contents.forEach(content => {
+                    const contentDate = new Date(content.content_date);
+                    contentDate.setDate(contentDate.getDate() + 1); // Add one day
+                    const key = contentDate.toISOString().split('T')[0];
+                    (contentMap[key] = contentMap[key] || []).push(content);
+                });
+                days.forEach(day => { %>
+                    <div class="day">
+                        <div class="day-header">
+                            <div class="day-name"><%= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()] %></div>
+                            <div class="day-date"><%= day.getDate() %></div>
+                        </div>
+                        <div class="content-list">
+                            <% const dayKey = day.toISOString().split('T')[0]; %>
+                            <% if (contentMap[dayKey]) { %>
+                                <% contentMap[dayKey].forEach(content => { %>
+                                    <a href="\content_det/<%= content.id %>">
+                                        <div class="content-item">
+                                            <div class="det"><span><%= content.app_name %></span></div>
+                                            <% if (content.images?.[0]?.image_url) { %>
+                                                <img src="<%= content.images[0].image_url %>" alt="Content Image">
+                                            <% } else { %>
+                                                <div class="no-image">No image available</div>
+                                            <% } %>
+                                            <div class="content-caption"><%= content.caption || 'No caption' %></div>
+                                            <div class="det">
+                                                <span style="color:<%= content.approved ? 'rgb(15, 131, 130)' : 'rgb(214, 212, 100)' %>">
+                                                    <%= content.approved ? 'approved' : 'pending' %>
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                            <% }); %>
-                        <% } else { %>
-                            <div class="no-content">No content for this day</div>
-                        <% } %>
+                                    </a>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="no-content">No content for this day</div>
+                            <% } %>
+                        </div>
                     </div>
-                </div>
-            <% }); %>
+                <% }); %>
+            </div>
         </div>
     </div>
+
+    <!-- Footer Section -->
     <footer>
         <p>&copy; 2025 جميع الحقوق محفوظة . وسم.</p>
     </footer>
-    <style>
-        /* Footer styling */
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 15px 0;
-            position: relative; /* Ensures it stays below content */
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        footer p {
-            margin: 0;
-            font-size: 14px;
-        }
-    </style>
 </body>
 </html>
