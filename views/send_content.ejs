@@ -4,39 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Content</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Form Container */
+        form {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Headings */
+        h1 {
+            text-align: center;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555555;
+        }
+
+        /* Input Fields and Select Dropdowns */
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* File Upload Button */
+        input[type="file"] {
+            padding: 8px;
+            border: none;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        /* Submit Button */
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Custom Dropdown Styling */
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .dropdown-selected {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .dropdown-selected img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .dropdown-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-top: none;
+            z-index: 10;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dropdown-item img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Add New Content</h1>
-    <form action="/new_content" method="POST" enctype="multipart/form-data">
+    <form action="/new_content" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
         <!-- Hidden Input for Writer ID -->
         <input type="hidden" name="writer_id" value="<%= writer_id %>" required>
-
-        <!-- User Selection Dropdown -->
+        
+        <!-- Custom Dropdown for User Selection -->
         <label for="user_id">Select User:</label>
-        <select id="user_id" name="user_id" required>
-            <% users.forEach(user => { %>
-                <option value="<%= user.id %>"><%= user.username %></option>
-            <% }) %>
-        </select><br><br>
-
+        <div class="custom-dropdown">
+            <div class="dropdown-selected" id="selected-user" onclick="toggleDropdown()">
+                <img src="/profile.png" alt="Default Image" width="30px" height="30px">
+                <span>Select a user...</span>
+            </div>
+            <div class="dropdown-options" id="dropdown-options">
+                <% users.forEach(user => { %>
+                    <div class="dropdown-item" data-value="<%= user.id %>" data-image="<%= user.image_url ? user.image_url : '/profile.png' %>">
+                        <img src="<%= user.image_url ? user.image_url : '/profile.png' %>" alt="<%= user.username %>">
+                        <span><%= user.username %></span>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <input type="hidden" id="user_id" name="user_id" required>
+        <br><br>
+        
         <!-- Description -->
         <label for="description">Description:</label>
         <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
-
+        
         <!-- App Name Dropdown -->
         <label for="app_name">Select App Name:</label>
         <select id="app_name" name="app_name" required>
-            <option value="instagram_account">Instagram Account</option>
-            <option value="tiktok_account">TikTok Account</option>
-            <option value="x_account">X (formerly Twitter) Account</option>
+            <option value="instagram_account">Instagram</option>
+            <option value="tiktok_account">TikTok</option>
+            <option value="x_account">X (Twitter)</option>
+            <option value="linkedin_account">LinkedIn</option>
         </select><br><br>
-
+        
+        <label for="content_date">Select Content Date:</label>
+        <input type="date" id="content_date" name="content_date" required><br><br>
+        
         <!-- Images -->
-        <label for="images">Upload Images (up to 10):</label>
+        <label for="images">Upload Images</label>
         <input type="file" id="images" name="images" multiple accept="image/*" required><br><br>
-
-        <!-- Submit Button -->
-        <button type="submit">Create Content</button>
+        
+        <button type="submit">Upload Content</button>
     </form>
+    <!-- JavaScript to Handle Custom Dropdown -->
+    <script>
+        
+        // Toggle dropdown visibility
+        function toggleDropdown() {
+            const dropdownOptions = document.getElementById('dropdown-options');
+            dropdownOptions.style.display = dropdownOptions.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            const dropdown = document.querySelector('.custom-dropdown');
+            const dropdownOptions = document.getElementById('dropdown-options');
+            if (!dropdown.contains(event.target)) {
+                dropdownOptions.style.display = 'none';
+            }
+        });
+
+        // Handle user selection
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const selectedValue = item.getAttribute('data-value');
+                const selectedImage = item.getAttribute('data-image');
+                const selectedText = item.querySelector('span').innerText;
+
+                // Update the visible selected user
+                const selectedUser = document.getElementById('selected-user');
+                selectedUser.innerHTML = `
+                    <img src="${selectedImage}" alt="${selectedText}" width="30px" height="30px">
+                    <span>${selectedText}</span>
+                `;
+
+                // Set the hidden input value
+                document.getElementById('user_id').value = selectedValue;
+
+                // Hide the dropdown options
+                document.getElementById('dropdown-options').style.display = 'none';
+            });
+        });
+    </script>
+    <script>
+        // Ensure the date is sent in ISO format
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const dateInput = document.getElementById('content_date');
+            if (dateInput.value) {
+                const selectedDate = new Date(dateInput.value);
+                // Convert to ISO format (UTC)
+                dateInput.value = selectedDate.toISOString().split('T')[0]; // Keep only YYYY-MM-DD
+            }
+        });
+    </script>
+    <footer>
+        <p>&copy; 2025 جميع الحقوق محفوظة . وسم.</p>
+    </footer>
+    <style>
+        /* Footer styling */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            position: relative; /* Ensures it stays below content */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
 </body>
 </html>

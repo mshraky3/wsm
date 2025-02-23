@@ -4,81 +4,176 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/profile.css">
-    <!-- Include Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<style>
+    body {
+        background-color: #0f8382;
+    }
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 10px 20px;
+        font-size: xx-large;
+        border: 5px #0f8382 solid;
+        border-radius: 16px;
+    }
+
+    section {
+        margin-bottom: 2%;
+    }
+
+    .navbar .logo {
+        width: 5%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+
+    .navbar .nav-links a {
+        color: #0f8382;
+        text-decoration: none;
+        margin-left: 15px;
+        font-size: x-large;
+        font-weight: bold;
+    }
+
+    .navbar .nav-links a:hover {
+        text-decoration: underline;
+    }
+
+    .navbar .profile-photo .username {
+        display: none;
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #0f8382;
+        color: #ffffff;
+        padding: 5px 10px;
+        border: 1px solid #0f8382;
+        border-radius: 5px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .navbar .profile-photo:hover .username {
+        display: block;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        .navbar .logo {
+            width: 15%; /* Reduce logo size for smaller screens */
+        }
+
+        .navbar .nav-links a {
+            font-size: small; /* Reduce font size for better fit */
+        }
+
+        .send-content-link h1 {
+            font-size: small; /* Reduce font size for better fit */
+            margin: 0; /* Remove unnecessary margin */
+        }
+    }
+</style>
 <body>
-
-    <!-- Calendar Section -->
-    <div class="calendar-container">
-        <!-- Day Names Header -->
-        <div class="calendar-header">
-            <% 
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            weekdays.forEach(day => { %>
-                <div class="day-name-header"><%= day %></div>
-            <% }); %>
+    <section class="navbar-section" style="width: 100%;">
+        <div class="navbar">
+            <img class="logo" src="/logo.jpg" alt="Logo Icon">
+            <a href="/writer/add-content/<%= writer_id %>" class="send-content-link">
+                <h1>Send New Content</h1>
+            </a>
+            <div class="nav-links">
+                <a href="/writer/<%= writer_id %>">Content</a>
+            </div>
         </div>
-
-        <!-- Days Grid -->
-        <div class="calendar">
-            <% 
-            // Generate a 1-week calendar starting from today
-            const today = new Date();
-            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Start of the week (Sunday)
-            const days = [];
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(startOfWeek);
-                date.setDate(startOfWeek.getDate() + i);
-                days.push(date);
-            }
-            // Map content to dates
-            const contentMap = {};
-            contents.forEach(content => {
-                const contentDate = new Date(content.content_date);
-                const key = contentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-                if (!contentMap[key]) {
-                    contentMap[key] = [];
-                }
-                contentMap[key].push(content);
-            });
-            days.forEach(day => { %>
-                
-                <div class="day">
-                    <div class="day-header">
-                        <div class="day-name"><%= weekdays[day.getDay()] %></div>
-                        <div class="day-date"><%= day.getDate() %></div>
+    </section>
+    <section>
+        <h1>Uploaded Content</h1>
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <% ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => { %>
+                    <div class="day-name-header"><%= day %></div>
+                <% }); %>
+            </div>
+            <div class="calendar">
+                <% 
+                const today = new Date();
+                const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                const days = Array(7).fill().map((_, i) => {
+                    const date = new Date(startOfWeek);
+                    date.setDate(startOfWeek.getDate() + i);
+                    return date;
+                });
+                const contentMap = {};
+                contents.forEach(content => {
+                    const contentDate = new Date(content.content_date);
+                    contentDate.setDate(contentDate.getDate() + 1); // Add one day
+                    const key = contentDate.toISOString().split('T')[0];
+                    (contentMap[key] = contentMap[key] || []).push(content);
+                });
+                days.forEach(day => { %>
+                    <div class="day">
+                        <div class="day-header">
+                            <div class="day-name"><%= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()] %></div>
+                            <div class="day-date"><%= day.getDate() %></div>
+                        </div>
+                        <div class="content-list">
+                            <% const dayKey = day.toISOString().split('T')[0]; %>
+                            <% if (contentMap[dayKey]) { %>
+                                <% contentMap[dayKey].forEach(content => { %>
+                                    <a href="\content_det/<%= content.content_id %>">
+                                        <div class="content-item">
+                                            <div class="app-name"><%= users.username %></div>
+                                            <% if (content.images?.[0]?.image_url) { %>
+                                                <img src="<%= content.images[0].image_url %>" alt="Content Image">
+                                            <% } else { %>
+                                                <div class="no-image">No image available</div>
+                                            <% } %>
+                                            <div class="content-caption"><%= content.description || 'No caption' %></div>
+                                            <div class="content-caption">
+                                                <%= content.app_name === "instagram_account" ? "Instagram" :
+                                                    content.app_name === "tiktok_account" ? "TikTok" :
+                                                    content.app_name === "linkedin_account" ? "LinkedIn" : "X" %>
+                                            </div>
+                                            <div class="app-name" style="color:<%= content.approved ? '#0f8382' : 'rgb(255, 17, 0)' %>">
+                                                <%= content.approved ? 'Approved' : 'Pending' %>
+                                            </div>
+                                        </div>
+                                    </a>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="no-content">No content for this day</div>
+                            <% } %>
+                        </div>
                     </div>
-                    <div class="content-list">
-                        <% 
-                        const dayKey = day.toISOString().split('T')[0];
-                        if (contentMap[dayKey]) {
-                            contentMap[dayKey].forEach(content => { 
-                                // Get the first image from the images array
-                                const firstImage = content.images && content.images.length > 0 ? content.images[0].image_url : null;
-                            %>
-                            <a href="\content_det/<%= content.content_id %>">
-                                <div class="content-item">
-                                    <div   class="app-name">
-                                        <%= users.username %>
-                                    </div>
-                                    <% if (firstImage) { %>
-                                        <img src="<%= firstImage %>" alt="Content Image">
-                                    <% } else { %>
-                                        <div class="no-image">No image available</div>
-                                    <% } %>
-                                    <div class="content-caption"><%= content.description || 'No caption' %></div>
-                                    <div class="app-name">Posted on: <%= content.app_name %></div>
-                                </div>
-                            </a>
-                            <% });
-                        } else { %>
-                            <div class="no-content">No content for this day</div>
-                        <% } %>
-                    </div>
-                </div>
-            <% }); %>
+                <% }); %>
+            </div>
         </div>
-    </div>
+    </section>
+    <footer>
+        <p>&copy; 2025 جميع الحقوق محفوظة . وسم.</p>
+    </footer>
+    <style>
+        
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            position: relative; /* Ensures it stays below content */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
 </body>
 </html>

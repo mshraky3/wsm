@@ -1,52 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Details</title>
-    <link rel="stylesheet" href="/writer.css"> <!-- Link to the CSS file -->
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport"content="width=device-width, initial-scale=1.0"><title>Content Details</title>
     <link rel="stylesheet" href="/navbar.css">
-</head>
-<body>
-    <div class="navbar">
-        <a class="logo" href="/">
-            <img src="/logo.jpg" alt="Logo Icon"> 
-            <span>وسم</span> 
-        </a>
-        <div class="nav-links">
-            <a><%= user.username %></a>
+<link rel="stylesheet"href="/writer.css"></head><style></style><body><div class="center-nav"><div class="navbar"><a class="logo" href="/"><img src="/logo.jpg"alt="Logo Icon"><span>وسم</span> 
+        </a><div class="nav-links"><a href="/profile/<%=user.id %>"><%= user.username %></a>
             <div class="profile-photo">
                 <img src="<%= `data:image/jpeg;base64,${Buffer.from(user.user_photo).toString('base64')}` %>" alt="Profile Photo">
                 <div class="username"><%= user.username %></div>
             </div>
         </div>
-
     </div>
+    </div>
+
     <div class="page">
         <div class="instagram-container">
-            <!-- Post Header -->
+           
             <div class="post-header">
                 <div class="user-info">
                     <span class="username"><%= content.app_name %></span>
                 </div>
             </div>
-            <!-- Image Slider -->
+            
             <div class="image-slider">
                 <% if (images && images.length > 0) { %>
                     <div class="slider-container">
-                        <!-- Radio Buttons for Navigation -->
+                        
                         <% images.forEach((image, index) => { %>
                             <input type="radio" name="slider" id="slide<%= index + 1 %>" class="slider-radio" <%= index === 0 ? 'checked' : '' %>>
                         <% }) %>
     
-                        <!-- Images -->
+                        
                         <div class="slider-images">
                             <% images.forEach((image, index) => { %>
                                 <img src="<%= image.image_url %>" alt="Content Image" class="slider-image">
                             <% }) %>
                         </div>
-    
-                        <!-- Navigation Dots -->
+                       
                         <div class="slider-dots">
                             <% images.forEach((image, index) => { %>
                                 <label for="slide<%= index + 1 %>" class="dot"></label>
@@ -58,10 +45,29 @@
                 <% } %>
             </div>
     
-            <!-- Post Details -->
+           
             <div class="post-details">
                 <p class="description"><%= content.description || 'No description' %></p>
-                <p class="date"><%= content.content_date %></p>
+                <p class="date">
+                    sent on : 
+                    <% 
+                      
+                      const date = new Date(content.content_date);
+                  
+                    
+                      const day = String(date.getDate()).padStart(2, '0'); 
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const year = date.getFullYear(); 
+                  
+                      
+                      const formattedDate = `${day}/${month}/${year}`;                  
+                      // Combine the formatted date and time
+                      const fullDateTime = `${formattedDate}`;
+                    %>
+                   
+                    <%= fullDateTime %>
+                  </p>
+                
             </div>
     
     
@@ -71,7 +77,7 @@
             
         </div>
         <div class="instagram-container">
-            <!-- Post Header -->
+          
             <div class="post-header">
                 <div class="user-info">
                     <span class="username"><%= content.app_name %></span>
@@ -82,12 +88,12 @@
             <div class="image-slider">
                 <div class="stats-card">
                     <div class="stats-header">
-                      <span class="stats-title">Followers</span>
-                      <span class="stats-icon">🚀</span>
+                      <span class="stats-title">likes</span>
+                      <span class="stats-icon">👍</span>
                     </div>
-                    <div class="stats-value">12.3K</div>
+                    <div class="stats-value">1.3K</div>
                     <div class="stats-change">
-                      <span class="stats-change-value">+500</span>
+                      <span class="stats-change-value">+50</span>
                       <span class="stats-change-label">since last week</span>
                     </div>
                     <div class="stats-progress">
@@ -99,9 +105,9 @@
                       <span class="stats-title">Followers</span>
                       <span class="stats-icon">🚀</span>
                     </div>
-                    <div class="stats-value">12.3K</div>
+                    <div class="stats-value">300</div>
                     <div class="stats-change">
-                      <span class="stats-change-value">+500</span>
+                      <span class="stats-change-value">+50</span>
                       <span class="stats-change-label">since last week</span>
                     </div>
                     <div class="stats-progress">
@@ -110,12 +116,12 @@
                   </div>
                   <div class="stats-card">
                     <div class="stats-header">
-                      <span class="stats-title">Followers</span>
-                      <span class="stats-icon">🚀</span>
+                      <span class="stats-title">comments</span>
+                      <span class="stats-icon">💬</span>
                     </div>
-                    <div class="stats-value">12.3K</div>
+                    <div class="stats-value">150</div>
                     <div class="stats-change">
-                      <span class="stats-change-value">+500</span>
+                      <span class="stats-change-value">+20</span>
                       <span class="stats-change-label">since last week</span>
                     </div>
                     <div class="stats-progress">
@@ -141,25 +147,6 @@
                                 <span class="comment-text"><%= comment.comment_text %></span>
                                 <% } %>    
                         </div>
-                        <!-- Replies -->
-                        <div class="replies">
-                            <% if (comment.replies && comment.replies.length > 0) { %>
-                                <ul class="reply-list">
-                                    <% comment.replies.forEach(reply => { %>
-                                        <li class="reply-item">
-                                            <span class="username">@writer<%= reply.reply_writer_id %></span>
-                                            <span class="reply-text"><%= reply.reply_text %></span>
-                                        </li>
-                                    <% }) %>
-                                </ul>
-                            <% } %>
-                            <!-- Reply Form -->
-                            <form action="/comments/reply/<%= comment._id %>" method="POST" class="reply-form">
-                                <input type="hidden" name="parentId" value="<%= comment._id %>">
-                                <textarea name="replyText" placeholder="Write a reply..." required></textarea>
-                                <button type="submit">Reply</button>
-                            </form>
-                        </div>
                     </li>
                 <% }) %>
             </ul>
@@ -167,7 +154,7 @@
             <p class="no-comments">No comments available for this post.</p>
         <% } %>
     
-        <!-- Comment Form -->
+        
         <form action="/comments" method="POST" class="comment-form" >
             <input type="hidden" value="<%=user.id%>" name="user_id">
             <input type="hidden" value="<%=content.id%>" name="postId">
@@ -191,6 +178,26 @@
 
     <!-- Hidden Input for Images -->
     <input type="hidden" id="imageUrls" value="<%= images.map(img => img.image_url).join(',') %>">
-    <script src="/slider.js"></script> <!-- Link to the JavaScript file -->
+    <script src="/slider.js"></script>
+    <footer>
+        <p>&copy; 2025 جميع الحقوق محفوظة . وسم.</p>
+    </footer>
+    <style>
+        /* Footer styling */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            position: relative; /* Ensures it stays below content */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
 </body>
-</html>
+</html> ;

@@ -6,20 +6,31 @@
     <title><%= user.username %>'s Profile</title>
     <link rel="stylesheet" href="/profile.css">
     <link rel="stylesheet" href="/navbar.css">
-    <!-- Include Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 </head>
-<body>
-    <!-- Navbar -->
-    <div class="navbar" >
-        <a class="logo" href="/">
-            <img src="/logo.jpg" alt="Logo Icon"> 
-            <span>وسم</span> 
-        </a>
+<style>
+    @media (max-width: 768px) {
+        .navbar .logo img {
+            width: 50%; /* Reduce logo size for smaller screens */
+        }
 
+        .navbar .logo span {
+            font-size: medium; /* Reduce font size for better fit */
+        }
+
+        .navbar .nav-links a {  
+            font-size: 12px; /* Reduce font size for better fit */
+            margin: 0; /* Remove unnecessary margin */
+        }
+    }
+</style>
+<body>
+    <div class="navbar">
+        <a class="logo" href="/">
+            <img src="/logo.jpg" alt="Logo Icon">
+            <span>وسم</span>
+        </a>
         <div class="nav-links">
-            
             <a><%= user.username %></a>
             <div class="profile-photo">
                 <img src="<%= `data:image/jpeg;base64,${Buffer.from(user.user_photo).toString('base64')}` %>" alt="Profile Photo">
@@ -28,71 +39,58 @@
         </div>
     </div>
 
-    
-    <section>
-    </section>
     <div class="calendar-container">
-        <!-- Day Names Header -->
         <div class="calendar-header">
-            <% 
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            weekdays.forEach(day => { %>
+            <% ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => { %>
                 <div class="day-name-header"><%= day %></div>
             <% }); %>
         </div>
-        <!-- Days Grid -->
         <div class="calendar">
             <% 
             const today = new Date();
-            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Start of the week (Sunday)
-            const days = [];
-            for (let i = 0; i < 7; i++) {
+            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+            const days = Array(7).fill().map((_, i) => {
                 const date = new Date(startOfWeek);
                 date.setDate(startOfWeek.getDate() + i);
-                days.push(date);
-            }
-            // Map content to dates
+                return date;
+            });
+
             const contentMap = {};
             contents.forEach(content => {
                 const contentDate = new Date(content.content_date);
-                const key = contentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-                if (!contentMap[key]) {
-                    contentMap[key] = [];
-                }
-                contentMap[key].push(content);
+                contentDate.setDate(contentDate.getDate() + 1); // Add one day
+                const key = contentDate.toISOString().split('T')[0];
+                (contentMap[key] = contentMap[key] || []).push(content);
             });
+
             days.forEach(day => { %>
                 <div class="day">
                     <div class="day-header">
-                        <div class="day-name"><%= weekdays[day.getDay()] %></div>
+                        <div class="day-name"><%= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()] %></div>
                         <div class="day-date"><%= day.getDate() %></div>
                     </div>
                     <div class="content-list">
-                        <% 
-                        const dayKey = day.toISOString().split('T')[0];
-                        if (contentMap[dayKey]) {
-                            contentMap[dayKey].forEach(content => { 
-                                // Get the first image from the images array
-                                const firstImage = content.images && content.images.length > 0 ? content.images[0].image_url : null;
-                            %>
-                            <a href='\content_det/<%=content.id%>'>
-                                <div class="content-item">
-                                    <% if (firstImage) { %>
-                                        <img src="<%= firstImage %>" alt="Content Image">
-                                    <% } else { %>
-                                        <div class="no-image">No image available</div>
-                                    <% } %>
-                                    <div class="content-caption"><%= content.caption || 'No caption' %></div>
-
-                                    <% if(content.approved){ %>
-                                    <div class="det" ><span style="color:rgb(15, 131, 130)">  approved </span>  </div>
-                                    <% }else { %>
-                                        <div class="det"><span style="color:rgb(214, 212, 100)"> pending </span> </div>
-                                    <% } %>
-                                </div>
-                            </a>
-                            <% });
-                        } else { %>
+                        <% const dayKey = day.toISOString().split('T')[0]; %>
+                        <% if (contentMap[dayKey]) { %>
+                            <% contentMap[dayKey].forEach(content => { %>
+                                <a href="\content_det/<%= content.id %>">
+                                    <div class="content-item">
+                                        <div class="det"><span><%= content.app_name %></span></div>
+                                        <% if (content.images?.[0]?.image_url) { %>
+                                            <img src="<%= content.images[0].image_url %>" alt="Content Image">
+                                        <% } else { %>
+                                            <div class="no-image">No image available</div>
+                                        <% } %>
+                                        <div class="content-caption"><%= content.caption || 'No caption' %></div>
+                                        <div class="det">
+                                            <span style="color:<%= content.approved ? 'rgb(15, 131, 130)' : 'rgb(214, 212, 100)' %>">
+                                                <%= content.approved ? 'approved' : 'pending' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }); %>
+                        <% } else { %>
                             <div class="no-content">No content for this day</div>
                         <% } %>
                     </div>
@@ -100,5 +98,25 @@
             <% }); %>
         </div>
     </div>
+    <footer>
+        <p>&copy; 2025 جميع الحقوق محفوظة . وسم.</p>
+    </footer>
+    <style>
+        /* Footer styling */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            position: relative; /* Ensures it stays below content */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
 </body>
 </html>

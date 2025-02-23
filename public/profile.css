@@ -1,12 +1,9 @@
-
 /* General Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
-
 
 body {
     font-family: 'Poppins', sans-serif; /* Use a modern font */
@@ -17,9 +14,29 @@ body {
     align-items: center;
     min-height: 100vh;
 }
-a{
+.send-content-link {
     text-decoration: none;
 }
+.send-content-link h1 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0f8382;
+    text-align: center;
+    padding: 15px 30px;
+    border: 2px solid #0f8382;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: transparent;
+}
+.send-content-link:hover h1 {
+    background-color: #0f8382;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+a {
+    text-decoration: none;
+}
+
 h1 {
     font-size: 2rem;
     margin: 20px 0;
@@ -28,12 +45,13 @@ h1 {
 }
 
 .calendar-container {
-    width: 98%; /* Take 98% of the screen width */
-    max-width: none; /* Remove any maximum width limit */
+    width: 100%;
+    max-width: 1500px; /* Limit max width for larger screens */
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0 auto; /* Center the container */
 }
 
 .calendar-header {
@@ -56,23 +74,24 @@ h1 {
 
 .calendar {
     display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 7 columns for days */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive grid */
     gap: 10px;
     width: 100%;
 }
 
 .day {
-    height: 80vh; /* Each day takes 80% of the viewport height */
+    height: auto; /* Auto height for better responsiveness */
+    min-height: 150px; /* Minimum height */
     background: #ffffff; /* White background */
     border-radius: 16px; /* Rounded corners */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     overflow-y: auto; /* Allow scrolling if content overflows */
-    padding: 20px;
+    padding: 10px; /* Reduce padding for smaller screens */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
 }
 
 .day:hover {
-    transform: translateY(-10px); /* Lift on hover */
+    transform: translateY(-5px); /* Lift on hover */
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
 }
 
@@ -82,13 +101,13 @@ h1 {
 }
 
 .day-name {
-    font-size: 1.2rem;
+    font-size: 1rem; /* Reduce font size for smaller screens */
     font-weight: bold;
     color: #0f8382; /* Primary blue */
 }
 
 .day-date {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #6b7280; /* Gray text */
 }
 
@@ -101,7 +120,7 @@ h1 {
 .content-item {
     background: #f3f4f6; /* Light gray background */
     border-radius: 12px; /* Rounded corners */
-    padding: 15px;
+    padding: 10px; /* Reduce padding for smaller screens */
     transition: transform 0.3s ease, background 0.3s ease; /* Smooth hover effect */
 }
 
@@ -119,25 +138,78 @@ h1 {
 
 .content-caption {
     margin-top: 10px;
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Smaller font size for captions */
     color: #4b5563; /* Gray caption text */
     text-align: center;
 }
 
 .no-content {
-    font-size: 1rem;
+    font-size: 0.9rem; /* Smaller font size for no content message */
     color: #a1a1aa; /* Light gray text */
     text-align: center;
     margin-top: 20px;
 }
 
-
-
-
 .det {
-    margin-top: 10px;
-    font-size: 0.6rem;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowed text */
+    text-overflow: ellipsis;
+    margin-top: 5px;
+    font-size: 0.7rem; /* Smaller font size for details */
     color: #4b5563; /* Gray caption text */
     text-align: center;
-    
-}   
+}
+
+/* Media Queries for Responsiveness */
+
+@media (max-width: 768px) {
+    .calendar-header {
+        grid-template-columns: repeat(3, 1fr); /* Show fewer days on smaller screens */
+    }
+
+    .calendar {
+        grid-template-columns: repeat(3, 1fr); /* Show fewer days on smaller screens */
+    }
+
+    .day-name-header {
+        font-size: 1rem; /* Reduce font size for day headers */
+    }
+
+    .day-name {
+        font-size: 0.9rem; /* Reduce font size for day names */
+    }
+
+    .day-date {
+        font-size: 0.8rem; /* Reduce font size for dates */
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-header {
+        grid-template-columns: repeat(2, 1fr); /* Show even fewer days on very small screens */
+    }
+
+    .calendar {
+        grid-template-columns: repeat(2, 1fr); /* Show even fewer days on very small screens */
+    }
+
+    .day-name-header {
+        font-size: 0.9rem; /* Further reduce font size for day headers */
+    }
+
+    .day-name {
+        font-size: 0.8rem; /* Further reduce font size for day names */
+    }
+
+    .day-date {
+        font-size: 0.7rem; /* Further reduce font size for dates */
+    }
+
+    .content-caption {
+        font-size: 0.7rem; /* Further reduce font size for captions */
+    }
+
+    .det {
+        font-size: 0.6rem; /* Further reduce font size for details */
+    }
+}
