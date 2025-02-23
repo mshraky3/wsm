@@ -124,7 +124,7 @@
                 const contentMap = {};
                 contents.forEach(content => {
                     const contentDate = new Date(content.content_date);
-                    contentDate.setDate(contentDate.getDate() + 1); // Add one day
+                    contentDate.setDate(contentDate.getDate()); // Add one day
                     const key = contentDate.toISOString().split('T')[0];
                     (contentMap[key] = contentMap[key] || []).push(content);
                 });
