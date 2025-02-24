@@ -193,9 +193,8 @@ app.get("/profile/:id", async (req, res) => {
 
 
 app.get("/writer/:id", async (req, res) => {
+    const writer_id = req.params.id;
     try {
-        const writer_id = req.params.id;
-
         // Fetch the user_id from the content table for the given writer_id
         const rusaltuserid = await db.query('SELECT user_id FROM content WHERE writer_id = $1', [writer_id]);
         const userid = rusaltuserid.rows[0].user_id;
