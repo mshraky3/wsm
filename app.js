@@ -112,14 +112,12 @@ app.post('/login', async (req, res) => {
         // Check users table
         const userQuery = 'SELECT * FROM users WHERE username = $1 AND password = $2';
         const userResult = await db.query(userQuery, [username, password]);
-
         if (userResult.rows.length > 0) {
             // User found in the users table
             req.session.isUser = true;
             return res.redirect(`/profile/${userResult.rows[0].id}`);
         }
 
-        // If not found in users, check writers table
         const writerQuery = 'SELECT * FROM writers WHERE username = $1 AND password = $2';
         const writerResult = await db.query(writerQuery, [username, password]);
 
@@ -249,11 +247,11 @@ app.get("/writer/:id", async (req, res) => {
             };
         }));
 
-        
+
         res.render("writer.ejs", { writer_id, users, contents, isWriter: req.session.isWriter });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Server error");
+        res.redirect(`/writer/add-content/${writer_id}`);
     }
 });
 
@@ -357,7 +355,7 @@ app.get("/content_det/:id/", async (req, res) => {
 
 
         const commentIds = comments.map(comment => comment.comment_id);
-        
+
         // Render the EJS template with all data
         res.render("content.ejs", { content, images, comments, user, isWriter: req.session.isWriter });
     } catch (error) {
@@ -405,18 +403,18 @@ app.post("/comments", async (req, res) => {
 });
 
 
-app.post("/approved" , (req , res)=>{
+app.post("/approved", (req, res) => {
     const id = req.body.user_id;
     const post_id = req.body.postId;
     try {
-            const query  = `UPDATE content SET approved = true WHERE id = $1;`
-            db.query(query , [post_id]);
-            res.redirect(`/content_det/${post_id}`);
+        const query = `UPDATE content SET approved = true WHERE id = $1;`
+        db.query(query, [post_id]);
+        res.redirect(`/content_det/${post_id}`);
     } catch (error) {
         console.error(error)
         res.redirect("/");
     }
-    
+
 })
 app.listen(3000, () => {
     console.log(`Server running on http://localhost:${3000}`);
