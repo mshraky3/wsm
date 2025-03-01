@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
-import busboy from 'busboy'; // Use busboy to handle multipart/form-data
+import busboy from 'busboy'; 
 import { dirname, join } from 'path';
 import fileUpload from "express-fileupload";
 import multer from 'multer';
@@ -37,16 +37,38 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, 'public'))); // Serve static files from the 'public' folder
 
 // PostgreSQL connection pool
+// const db = new Pool({
+//     host: 'ep-green-paper-a2v2q280.eu-central-1.pg.koyeb.app',
+//     port: 5432,
+//     user: 'koyeb-adm',
+//     password: 'npg_eWvwuxlqL7V8',
+//     database: 'koyebdb',
+//     ssl: {
+//         rejectUnauthorized: false, // Disable SSL certificate validation
+//     }
+// });
+
+// const db = new Pool({
+//     host: 'localhost',
+//     port: 5432,
+//     user: 'postgres',
+//     password: 'Ejc9c123',
+//     database: 'postgres'
+// });
+
+
 const db = new Pool({
-    host: 'ep-green-paper-a2v2q280.eu-central-1.pg.koyeb.app',
+    host: 'ep-old-flower-a22rph1w.eu-central-1.pg.koyeb.app',
     port: 5432,
     user: 'koyeb-adm',
-    password: 'npg_eWvwuxlqL7V8',
+    password: 'npg_WqndbA85eYJR',
     database: 'koyebdb',
     ssl: {
         rejectUnauthorized: false, // Disable SSL certificate validation
     }
 });
+
+
 
 
 //functions
