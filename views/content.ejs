@@ -88,7 +88,7 @@
                 
             </div>
     
-    
+            
         <div class="comments-section">
 
         </div>
@@ -148,47 +148,35 @@
                   </div>
             </div>
     
-        <div class="comments-section">
-        <h3>Comments</h3>
-        <% if (comments && comments.length > 0) { %>
-            <ul class="comment-list">
-                <% comments.forEach(comment => { %>
-                    <li class="comment-item">
-                        <div class="comment-header">
-                            
-                            <%if(comment.comment_writer_id){  %>
-                                
-                            <span class="username">writer</span>
-                            <span class="comment-text"><%= comment.comment_text %></span>
-                            <% }else{ %>
-                                <span class="username">user</span>
-                                <span class="comment-text"><%= comment.comment_text %></span>
-                                <% } %>    
-                        </div>
-                    </li>
-                <% }) %>
-            </ul>
-        <% } else { %>
-            <p class="no-comments">No comments available for this post.</p>
-        <% } %>
-    
-        
-        <form action="/comments" method="POST" class="comment-form" >
-            <input type="hidden" value="<%=user.id%>" name="user_id">
-            <input type="hidden" value="<%=content.id%>" name="postId">
-            <textarea name="commentText" placeholder="Write a comment..." required></textarea>
-            <button type="submit" class="submit">Comment</button>
-        </form>
-        <form action="/approved" method="post" class="comment-form">
-            <input type="hidden" value="<%=user.id%>" name="user_id">
-            <input type="hidden" value="<%=content.id%>" name="postId">
-            <button name="approved" class="approved"> approved</button>
-        </form>
-        
-
-
-        
-        </div>
+            <div class="comments-section">
+                <h3>Comments</h3>
+                <% if (comments && comments.length > 0) { %>
+                    <ul class="comment-list">
+                        <% comments.forEach(comment => { %>
+                            <li class="comment-item">
+                                <div class="comment-header">
+                                    <% if (comment.writer_id) { %>
+                                        <span class="username">Writer</span>
+                                    <% } else if (comment.user_id) { %>
+                                        <span class="username">User</span>
+                                    <% } %>
+                                    <span class="comment-text"><%= comment.comment_text %></span>
+                                    <span class="comment-date"><%= new Date(comment.comment_created_at).toLocaleString() %></span>
+                                </div>
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p class="no-comments">No comments available for this post.</p>
+                <% } %>
+            
+                <form action="/comments" method="POST" class="comment-form">
+                    <input type="hidden" value="<%= user.id %>" name="user_id">
+                    <input type="hidden" value="<%= content.id %>" name="postId">
+                    <textarea name="commentText" placeholder="Write a comment..." required></textarea>
+                    <button type="submit" class="submit">Comment</button>
+                </form>
+            </div>
             
         </div>
     </div>
