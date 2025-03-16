@@ -71,14 +71,13 @@ const db = new Pool({
 
 
 
-//functions
+
 async function user_by_id(user_id) {
     const data = await db.query('SELECT * FROM users WHERE id = $1', [user_id])
     return (data.rows[0]);
 }
 
 app.get('/', (req, res) => {
-
     req.session.isUser = false;
     res.render('index.ejs');
 });
@@ -385,37 +384,37 @@ app.get("/content_det/:id/", async (req, res) => {
     }
 });
 
-// Route for submitting a new comment
+
 app.post("/comments", async (req, res) => {
-
-
-
     try {
         const commentText = req.body.commentText;
-        const user_id = req.body.user_id
-        const postId = req.body.postId
+        const user_id = req.body.user_id;
+        const postId = req.body.postId;
 
         // Validate input
         if (!commentText) {
             return res.status(400).json({ error: "Comment text is required." });
         }
-        var query;
+
+        let query;
+        let values;
         if (req.session.isWriter) {
-            var query =
-                `
-           INSERT INTO comments(
-            content_id,  writer_id, comment_text)
-           VALUES ($1, $2, $3);
-           `
+            query = `
+                INSERT INTO comments (
+                    content_id, writer_id, comment_text
+                ) VALUES ($1, $2, $3);
+            `;
+            values = [postId, user_id, commentText];
         } else {
-            var query =
-                `
-           INSERT INTO comments(
-            content_id,  user_id, comment_text)
-           VALUES ($1, $2, $3);
-           `
+            query = `
+                INSERT INTO comments (
+                    content_id, user_id, comment_text
+                ) VALUES ($1, $2, $3);
+            `;
+            values = [postId, user_id, commentText];
         }
-        const newComment = await db.query(query, [postId, user_id, commentText])
+
+        await db.query(query, values);
         res.redirect(`/content_det/${postId}`);
     } catch (error) {
         console.error(error);
